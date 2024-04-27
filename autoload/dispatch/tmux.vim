@@ -24,7 +24,7 @@ function! dispatch#tmux#handle(request) abort
     endif
     return dispatch#tmux#make(a:request)
   elseif a:request.action ==# 'start'
-    let command = 'tmux new-window -P -t '.shellescape(session.':')
+    let command = 'tmux new-window -a -P -t '.shellescape(session.':')
     let command .= ' -n '.shellescape(a:request.title)
     if a:request.background
       let command .= ' -d'
@@ -50,9 +50,9 @@ function! dispatch#tmux#make(request) abort
   let title = shellescape(a:request.title)
   let height = get(g:, 'dispatch_tmux_height', get(g:, 'dispatch_quickfix_height', 10))
   if get(a:request, 'background', 0) || (height <= 0 && dispatch#has_callback())
-    let cmd = 'new-window -d -n '.title
+    let cmd = 'new-window -a -d -n '.title
   elseif has('gui_running') || empty($TMUX) || (!empty(''.session) && session !=# system('tmux display-message -p "#S"')[0:-2])
-    let cmd = 'new-window -n '.title
+    let cmd = 'new-window -a -n '.title
   else
     let cmd = 'split-window -l '.(height < 0 ? -height : height).' -d'
   endif
